@@ -1,0 +1,6 @@
+{
+  "name": "attlic",
+  "description": "Online assessment and examination management platform for recruiters and campus placement drives. Assess. Evaluate. Select.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

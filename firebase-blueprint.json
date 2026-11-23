@@ -1,0 +1,155 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Recruiter profile details and organization association",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["owner", "recruiter"] },
+        "organizationId": { "type": "string" },
+        "organizationName": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "Company or university recruitment organization entity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 120 },
+        "slug": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "ownerEmail": { "type": "string" },
+        "companyWebsite": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "ownerId"]
+    },
+    "OrganizationMember": {
+      "title": "OrganizationMember",
+      "description": "Membership mapping between a recruiter user and an organization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "role": { "type": "string", "enum": ["owner", "recruiter"] },
+        "invitedBy": { "type": "string" },
+        "joinedAt": { "type": "string" }
+      },
+      "required": ["organizationId", "userId", "userEmail", "role"]
+    },
+    "Assessment": {
+      "title": "Assessment",
+      "description": "Online placement examination configured by an organization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "code": { "type": "string" },
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "recruiterId": { "type": "string" },
+        "recruiterEmail": { "type": "string" },
+        "organizationName": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+        "durationMinutes": { "type": "number" },
+        "totalMarks": { "type": "number" },
+        "passingMarks": { "type": "number" },
+        "sections": { "type": "array" },
+        "enableAntiCheating": { "type": "boolean" },
+        "maxTabSwitches": { "type": "number" },
+        "instructions": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["code", "title", "organizationId", "recruiterId", "status", "durationMinutes"]
+    },
+    "PublicAssessment": {
+      "title": "PublicAssessment",
+      "description": "Sanitized candidate-facing examination metadata without answer keys or hidden test cases",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "code": { "type": "string" },
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "organizationName": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+        "durationMinutes": { "type": "number" },
+        "totalMarks": { "type": "number" },
+        "passingMarks": { "type": "number" },
+        "sections": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["code", "title", "organizationId", "status", "durationMinutes"]
+    },
+    "CandidateAttempt": {
+      "title": "CandidateAttempt",
+      "description": "Candidate exam submission linked to an assessment and organization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "assessmentId": { "type": "string" },
+        "assessmentCode": { "type": "string" },
+        "candidateName": { "type": "string", "maxLength": 100 },
+        "candidateEmail": { "type": "string", "maxLength": 100 },
+        "rollNumber": { "type": "string", "maxLength": 50 },
+        "college": { "type": "string", "maxLength": 120 },
+        "branch": { "type": "string", "maxLength": 80 },
+        "status": { "type": "string", "enum": ["in_progress", "submitted", "disqualified"] },
+        "score": { "type": "number" },
+        "totalMarks": { "type": "number" },
+        "percentage": { "type": "number" },
+        "passed": { "type": "boolean" },
+        "tabSwitchCount": { "type": "number" },
+        "answers": { "type": "object" },
+        "startedAt": { "type": "string" },
+        "submittedAt": { "type": "string" }
+      },
+      "required": ["assessmentId", "candidateName", "candidateEmail", "rollNumber", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Recruiter profile records"
+    },
+    "/organizations/{orgId}": {
+      "schema": "Organization",
+      "description": "Organizations created and owned by recruiters"
+    },
+    "/organizationMembers/{memberId}": {
+      "schema": "OrganizationMember",
+      "description": "Organization membership roles and invitations"
+    },
+    "/assessments/{assessmentId}": {
+      "schema": "Assessment",
+      "description": "Examinations created within specific organizations (recruiter-only)"
+    },
+    "/publicAssessments/{code}": {
+      "schema": "PublicAssessment",
+      "description": "Sanitized candidate-facing examinations indexed by access code (no answer keys)"
+    },
+    "/attempts/{attemptId}": {
+      "schema": "CandidateAttempt",
+      "description": "Candidate submissions isolated per organization"
+    }
+  }
+}

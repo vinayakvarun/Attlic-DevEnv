@@ -1,0 +1,129 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-\\.@]+$');
+    }
+
+    function isNonEmptyString(val, maxLen) {
+      return val is string && val.size() >= 1 && val.size() <= maxLen;
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email'])
+        && isNonEmptyString(data.uid, 128)
+        && isNonEmptyString(data.email, 254);
+    }
+
+    function isValidOrganization(data) {
+      return data.keys().hasAll(['id', 'name', 'ownerId'])
+        && isNonEmptyString(data.id, 128)
+        && isNonEmptyString(data.name, 160)
+        && isNonEmptyString(data.ownerId, 128);
+    }
+
+    function isValidOrganizationMember(data) {
+      return data.keys().hasAll(['organizationId', 'userId', 'userEmail', 'role'])
+        && isNonEmptyString(data.organizationId, 128)
+        && isNonEmptyString(data.userId, 128)
+        && isNonEmptyString(data.userEmail, 254)
+        && data.role in ['owner', 'recruiter'];
+    }
+
+    function isValidAssessment(data) {
+      return data.keys().hasAll(['code', 'title', 'organizationId', 'status', 'durationMinutes'])
+        && isNonEmptyString(data.code, 64)
+        && isNonEmptyString(data.title, 200)
+        && isNonEmptyString(data.organizationId, 128)
+        && data.status in ['draft', 'published', 'archived']
+        && data.durationMinutes is number
+        && data.durationMinutes > 0
+        && data.durationMinutes <= 720;
+    }
+
+    function isValidPublicAssessment(data) {
+      return isValidAssessment(data)
+        && !('recruiterEmail' in data)
+        && !('recruiterId' in data);
+    }
+
+    function isValidAttempt(data) {
+      return data.keys().hasAll(['assessmentId', 'status'])
+        && isNonEmptyString(data.assessmentId, 128)
+        && data.status in ['in_progress', 'submitted', 'disqualified'];
+    }
+
+    // Connection testing
+    match /test/connection {
+      allow get: if true;
+      allow list, write: if false;
+    }
+
+    // Recruiter Profile (no bulk listing / enumeration allowed)
+    match /users/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if false;
+      allow create: if isValidId(userId) && isValidUserProfile(request.resource.data);
+      allow update: if isValidId(userId)
+        && isValidUserProfile(request.resource.data)
+        && request.resource.data.uid == resource.data.uid;
+      allow delete: if false;
+    }
+
+    // Organizations collection (no bulk listing / enumeration allowed)
+    match /organizations/{orgId} {
+      allow get: if isValidId(orgId);
+      allow list: if false;
+      allow create: if isValidId(orgId) && isValidOrganization(request.resource.data);
+      allow update: if isValidId(orgId)
+        && isValidOrganization(request.resource.data)
+        && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if false;
+    }
+
+    // Organization Members collection
+    match /organizationMembers/{memberId} {
+      allow get: if isValidId(memberId);
+      allow list: if true;
+      allow create, update: if isValidId(memberId) && isValidOrganizationMember(request.resource.data);
+      allow delete: if isValidId(memberId);
+    }
+
+    // Sanitized Candidate-Facing Public Assessments (single lookup by exact code only; list forbidden)
+    match /publicAssessments/{code} {
+      allow get: if isValidId(code);
+      allow list: if false;
+      allow create, update: if isValidId(code) && isValidPublicAssessment(request.resource.data);
+      allow delete: if isValidId(code);
+    }
+
+    // Full Recruiter Assessments collection
+    match /assessments/{assessmentId} {
+      allow get: if isValidId(assessmentId);
+      allow list: if true;
+      allow create: if isValidId(assessmentId) && isValidAssessment(request.resource.data);
+      allow update: if isValidId(assessmentId) && isValidAssessment(request.resource.data);
+      allow delete: if isValidId(assessmentId);
+    }
+
+    // Exam attempts & submissions (submitted attempts are immutable against score tampering)
+    match /attempts/{attemptId} {
+      allow get: if isValidId(attemptId);
+      allow list: if true;
+      allow create: if isValidId(attemptId) && isValidAttempt(request.resource.data);
+      allow update: if isValidId(attemptId)
+        && isValidAttempt(request.resource.data)
+        && resource.data.status != 'submitted';
+      allow delete: if isValidId(attemptId);
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
