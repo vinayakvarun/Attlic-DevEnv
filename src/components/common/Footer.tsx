@@ -108,9 +108,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+        <div className="mt-8 pt-6 border-t border-slate-950 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
           <p>© {new Date().getFullYear()} <AttlicWordmark />. All rights reserved.</p>
-          <p>Assess. Evaluate. Select.</p>
         </div>
       </div>
     </footer>

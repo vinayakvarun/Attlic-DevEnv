@@ -1,7 +1,7 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
- * attlic - Assess. Evaluate. Select.
+ * attlic - Assessment Platform
  * Master App Router & Browser History State Container
  */
 
@@ -69,7 +69,7 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const titleMap: Record<NavigationPage, string> = {
-      landing: 'ATTLIC | Assess. Evaluate. Select.',
+      landing: 'ATTLIC | Assessment Platform',
       candidate_portal: 'Candidate Test Hall | ATTLIC Campus Assessments',
       candidate_test: 'Active Examination | ATTLIC',
       recruiter_login: 'Recruiter Login | ATTLIC Assessment Console',
@@ -80,7 +80,7 @@ const AppContent: React.FC = () => {
       privacy: 'Privacy & Data Security | ATTLIC',
       terms: 'Candidate Conduct & Exam Policy | ATTLIC',
     };
-    document.title = titleMap[routeState.page] || 'ATTLIC | Assess. Evaluate. Select.';
+    document.title = titleMap[routeState.page] || 'ATTLIC | Assessment Platform';
 
     const canonicalEl = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (canonicalEl && typeof window !== 'undefined') {

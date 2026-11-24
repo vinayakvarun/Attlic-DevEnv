@@ -1113,7 +1113,7 @@ export const DEFAULT_BRANDING: AppearanceBranding = {
   showWelcomeScreen: true,
   showTitleDisplay: true,
   welcomeMessage: 'Welcome to your verified placement examination. Please read the instructions carefully before launching the test.',
-  footerBrandingText: 'Powered by ATTLIC assessment infrastructure • Assess. Evaluate. Select.',
+  footerBrandingText: 'Powered by ATTLIC assessment infrastructure',
 };
 
 export const DEFAULT_CANDIDATE_EXPERIENCE: AppearanceCandidateExperience = {

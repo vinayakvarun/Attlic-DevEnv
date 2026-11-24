@@ -46,7 +46,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
         <div className="rounded-2xl bg-slate-900/60 border border-slate-800 p-8 space-y-4">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Target className="w-5 h-5 text-indigo-400" />
-            Our Mission: Assess. Evaluate. Select.
+            Our Mission &amp; Vision
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             Every hiring season, recruiters assess thousands of engineering applicants across hundreds

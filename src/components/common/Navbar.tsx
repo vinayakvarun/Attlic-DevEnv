@@ -57,9 +57,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onGoBac
           <button
             type="button"
             onClick={() => onNavigate('landing')}
-            className="cursor-pointer flex items-center gap-2.5 text-left focus:outline-none"
+            className="cursor-pointer flex items-center gap-2 text-left focus:outline-none"
           >
-            <BrandLogo size="md" showTagline={true} />
+            <BrandLogo size="sm" />
           </button>
         </div>
 

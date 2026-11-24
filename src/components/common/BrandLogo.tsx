@@ -84,7 +84,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         </span>
       </div>
 
-      {/* ATTLIC Wordmark & Optional Tagline */}
+      {/* ATTLIC Wordmark */}
       <div className="flex flex-col">
         <div className={`font-black tracking-tight flex items-center leading-none ${textSizes[size]}`}>
           <AttlicWordmark
@@ -94,14 +94,6 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
             }}
           />
         </div>
-        {showTagline && (
-          <span
-            className="text-[10px] font-semibold tracking-widest uppercase text-indigo-300/90 mt-1"
-            style={primaryColor ? { color: primaryColor } : undefined}
-          >
-            Assess. Evaluate. Select.
-          </span>
-        )}
       </div>
     </div>
   );
